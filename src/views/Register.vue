@@ -33,7 +33,7 @@ import { get } from 'lodash'
 export default {
   data () {
     return {
-      usename: '',
+      username: '',
       password: ''
     }
   },
@@ -46,10 +46,8 @@ export default {
     })
   },
   methods: {
-    registerUser () {
-      const usename = this.usename
-      const password = this.password
-      this.$store.dispatch('postRegisterInfo', { usename, password })
+    registerUser (username, password) {
+      this.$store.dispatch('postRegisterInfo', { username: this.username, password: this.password })
     }
   }
 }

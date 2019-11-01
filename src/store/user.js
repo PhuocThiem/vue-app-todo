@@ -10,7 +10,7 @@ import {
 } from '../constant/muationPypes'
 
 const state = {
-  register: {
+  user: {
     requesting: false,
     status: '',
     result: null,
@@ -34,23 +34,23 @@ const actions = {
 
 const mutations = {
   [POST_USER_INFO_REQUEST] (state) {
-    state.register.requesting = true
-    state.register.status = ''
+    state.user.requesting = true
+    state.user.status = ''
   },
   [POST_USER_INFO_SUCCESS] (state, payload) {
-    state.register.requesting = false
-    state.register.status = 'success'
-    state.register.result = payload
+    state.user.requesting = false
+    state.user.status = 'success'
+    state.user.result = payload
   },
   [POST_USER_INFO_FAIL] (state, payload) {
-    state.register.requesting = false
-    state.register.status = 'error'
-    state.register.result = payload
+    state.user.requesting = false
+    state.user.status = 'error'
+    state.user.result = payload
   }
 }
 
 const getters = {
-  register: state => get(state, 'register.result', {})
+  register: state => get(state, 'user.result', {})
 }
 
 export default {

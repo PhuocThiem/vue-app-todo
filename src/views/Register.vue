@@ -7,7 +7,7 @@
         <input
           type="email"
           class="form-control"
-          v-model="usename"
+          v-model="user.username"
           placeholder="Enter email"
         />
       </div>
@@ -16,38 +16,46 @@
         <input
           type="password"
           class="form-control"
-          v-model="password"
+          v-model="user.password"
           placeholder="Password"
         />
       </div>
-      <button type="submit" class="btn btn-primary" @click="registerUser">Submit</button>
+      <button type="submit" class="btn btn-primary" @click="registerUser()">
+        Submit
+      </button>
     </form>
   </div>
 </template>
 
 <script>
-
 import { mapGetters, mapState } from 'vuex'
 import { get } from 'lodash'
+// import { dictionary } from '../main'
 
 export default {
   data () {
     return {
-      username: '',
-      password: ''
+      user: {
+        username: '',
+        password: ''
+      }
     }
   },
   computed: {
     ...mapState({
-      requesting: state => get(state, 'register.register.requesting')
+      requesting: state => get(state, 'user.user.requesting')
     }),
     ...mapGetters({
       register: 'register'
     })
   },
   methods: {
-    registerUser (username, password) {
-      this.$store.dispatch('postRegisterInfo', { username: this.username, password: this.password })
+    registerUser (user) {
+      this.$store.dispatch('postRegisterInfo', {
+        username: this.user.username,
+        password: this.user.password
+      })
+      console.log('user', this.user)
     }
   }
 }
@@ -58,6 +66,6 @@ export default {
   height: 300px;
   width: 400px;
   margin-top: 100px;
-  text-align: left;
+  text-align: left
 }
 </style>

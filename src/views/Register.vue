@@ -20,7 +20,7 @@
           placeholder="Password"
         />
       </div>
-      <button type="submit" class="btn btn-primary" @click="registerUser()">
+      <button class="btn btn-primary" @click.prevent="registerUser()">
         Submit
       </button>
     </form>
@@ -28,37 +28,37 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
-import { get } from 'lodash'
+import { mapGetters, mapState } from 'vuex';
+import { get } from 'lodash';
 // import { dictionary } from '../main'
 
 export default {
-  data () {
+  data() {
     return {
       user: {
         username: '',
-        password: ''
-      }
-    }
+        password: '',
+      },
+    };
   },
   computed: {
     ...mapState({
-      requesting: state => get(state, 'user.user.requesting')
+      requesting: state => get(state, 'user.user.requesting'),
     }),
     ...mapGetters({
-      register: 'register'
-    })
+      register: 'register',
+    }),
   },
   methods: {
-    registerUser (user) {
+    registerUser() {
       this.$store.dispatch('postRegisterInfo', {
-        username: this.user.username,
-        password: this.user.password
-      })
-      console.log('user', this.user)
-    }
-  }
-}
+        email: this.user.username,
+        password: this.user.password,
+      });
+      console.log('user', this.user);
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -66,6 +66,6 @@ export default {
   height: 300px;
   width: 400px;
   margin-top: 100px;
-  text-align: left
+  text-align: left;
 }
 </style>

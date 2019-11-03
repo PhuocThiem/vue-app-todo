@@ -18,10 +18,12 @@
           class="form-control"
           v-model="user.password"
           placeholder="Password"
+          required
+          autofocus
         />
       </div>
       <button class="btn btn-primary" @click.prevent="registerUser()">
-        Submit
+        Register
       </button>
     </form>
   </div>
@@ -50,14 +52,14 @@ export default {
     }),
   },
   methods: {
-    registerUser() {
-      this.$store.dispatch('postRegisterInfo', {
+    async registerUser() {
+      await this.$store.dispatch('Register', {
         email: this.user.username,
         password: this.user.password,
       });
-      console.log('user', this.user);
+      this.$router.push('/');
     },
-  },
+  }
 };
 </script>
 

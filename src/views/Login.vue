@@ -21,12 +21,23 @@
           placeholder="Password"
         />
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button class="btn btn-primary" @click="logIn">Submit</button>
     </form>
   </div>
 </template>
 
 <script>
+export default {
+  methods: {
+    async logIn() {
+      await this.$store.dispatch('LogIn', {
+        email: this.user.username,
+        password: this.user.password,
+      });
+      this.$router.push('/');
+    },
+  },
+};
 </script>
 
 <style scoped>

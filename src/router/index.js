@@ -4,7 +4,7 @@ import Home from '../views/Home.vue';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Users from '../views/Users.vue';
-import store from '../store/user';
+// import store from '../store/user';
 
 Vue.use(VueRouter);
 // const ifNotAuthenticated = next => {
@@ -15,13 +15,13 @@ Vue.use(VueRouter);
 //   next('/');
 // };
 
-const ifAuthenticated = next => {
-  if (store.getters.isAuthenticated) {
-    next();
-    return;
-  }
-  next('/login');
-};
+// const ifAuthenticated = next => {
+//   if (store.getters.isAuthenticated) {
+//     next();
+//     return;
+//   }
+//   next('/login');
+// };
 const routes = [
   {
     path: '/register',
@@ -38,13 +38,13 @@ const routes = [
     path: '/',
     name: 'home',
     component: Home,
-    beforeEnter: ifAuthenticated,
+    // beforeEnter: ifAuthenticated,
   },
   {
     path: '/users',
     name: 'users',
     component: Users,
-    beforeEnter: ifAuthenticated,
+    // beforeEnter: ifAuthenticated,
   },
 ];
 

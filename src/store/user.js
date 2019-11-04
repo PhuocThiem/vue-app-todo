@@ -13,7 +13,7 @@ import {
   AUTH_LOGOUT,
 } from '../constant/muationPypes';
 
-const userState = {
+const state = {
   user: {
     requesting: false,
     status: '',
@@ -25,41 +25,39 @@ const userState = {
 };
 
 const actions = {
-  async LogIn({ commit, dispatch }, { email, password }) {
+  async LogIn({ commit }, { email, password }) {
     commit(AUTH_REQUEST);
     try {
       const res = await User.login(email, password);
       const token = get(res, 'headers.[x-auth]');
       localStorage.setItem('token', token);
+      console.log('token', token);
       commit(AUTH_SUCCESS, token);
-      dispatch(USER_REQUEST);
     } catch (error) {
       console.log(serializeError(error));
       commit(AUTH_FAIL, { error: serializeError(error) });
       localStorage.removeItem('token');
     }
   },
-  // async LogIn({ commit }, { email, password }) {
-  //   commit(USER_REQUEST);
-  //   try {
-  //     const res = await User.register(email, password);
-  //     const data = get(res, 'data');
-  //     const token = get(res, 'headers.[x-auth]');
-  //     localStorage.setItem('token', token);
-  //     console.log('res', res);
-  //     console.log('token', token);
-  //     commit(USER_SUCCESS, data, token);
-  //   } catch (error) {
-  //     console.log(serializeError(error));
-  //     commit(USER_FAIL, { error: serializeError(error) });
-  //     localStorage.removeItem('token');
-  //   }
-  // },
-  Logout({ commit, dispatch }) {
-    commit(AUTH_LOGOUT);
-    localStorage.removeItem('token');
-    dispatch(AUTH_LOGOUT);
+  async Register({ commit }, { email, password }) {
+    commit(USER_REQUEST);
+    try {
+      const res = await User.register(email, password);
+      const data = get(res, 'data');
+      const token = get(res, 'headers.[x-auth]');
+      localStorage.setItem('token', token);
+      console.log('token', token);
+      commit(USER_SUCCESS, data, token);
+    } catch (error) {
+      console.log(serializeError(error));
+      commit(USER_FAIL, { error: serializeError(error) });
+      localStorage.removeItem('token');
+    }
   },
+  // LogOut({ commit }) {
+  //   commit(AUTH_LOGOUT);
+  //   localStorage.removeItem('token');
+  // },
 };
 
 const mutations = {
@@ -89,7 +87,7 @@ const mutations = {
     state.status = 'success';
     state.token = token;
   },
-  [AUTH_FAIL]: state => {
+  [AUTH_FAIL] (state) {
     state.status = 'error';
   },
 };
@@ -100,7 +98,7 @@ const getters = {
 };
 
 export default {
-  state: userState,
+  state,
   actions,
   mutations,
   getters,

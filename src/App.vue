@@ -1,15 +1,16 @@
 <template>
-  <v-app >
-    <v-app-bar clipped-left app color="indigo" dark>
+  <v-app>
+    <v-app-bar clipped-left app color="indigo" dark v-if="isLoggedIn">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Todo</v-toolbar-title>
+      <div class="btn btn-primary" @click.prevent="logOut()">LogOut</div>
       <div class="mb-10">
-        <v-btn color="success" fab small dark position: absolute right @click="logOut">
+        <v-btn color="warning" fab small dark position: absolute right>
           <v-icon>mdi-account-convert</v-icon>
         </v-btn>
       </div>
     </v-app-bar>
-    <v-navigation-drawer clipped v-model="drawer" app color="indigo accent-1">
+    <v-navigation-drawer clipped v-model="drawer" app color="indigo accent-1" v-if="isLoggedIn">
       <v-list dense>
         <v-list-item :to="item.to" v-for="(item, index) in menu" :key="index">
           <v-list-item-action>
@@ -28,20 +29,20 @@
 </template>
 
 <script>
-// import { store } from 'vuex';
 import { mapGetters, mapState } from 'vuex';
 import { get } from 'lodash';
 
 export default {
   name: 'App',
-  components: {},
+  components: {
+  },
   data: () => ({
     drawer: null,
     menu: [
       {
         name: 'Home',
         icon: 'mdi-home',
-        to: '/home',
+        to: '/',
       },
       {
         name: 'Users',
@@ -60,8 +61,13 @@ export default {
     }),
     methods: {
       async logOut() {
-        await this.$store.dispatch('Logout');
+        console.log('isLogOut?');
+        await this.$store.dispatch('LogOut');
         this.$router.push('/login');
+        console.log('isAuthenticated', this.isAuthenticated);
+      },
+      isLoggedIn() {
+        return this.isAuthenticated;
       },
     },
   },

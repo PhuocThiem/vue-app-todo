@@ -4,18 +4,18 @@ import Home from '../views/Home.vue';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import Users from '../views/Users.vue';
-import store from '../store/index';
+import store from '../store/user';
 
 Vue.use(VueRouter);
-const ifNotAuthenticated = (to, from, next) => {
-  if (!store.getters.isAuthenticated) {
-    next();
-    return;
-  }
-  next('/');
-};
+// const ifNotAuthenticated = next => {
+//   if (!store.getters.isAuthenticated) {
+//     next();
+//     return;
+//   }
+//   next('/');
+// };
 
-const ifAuthenticated = (to, from, next) => {
+const ifAuthenticated = next => {
   if (store.getters.isAuthenticated) {
     next();
     return;
@@ -27,13 +27,12 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register,
-    beforeEnter: ifNotAuthenticated,
+    // beforeEnter: ifNotAuthenticated,
   },
   {
     path: '/login',
     name: 'login',
     component: Login,
-    beforeEnter: ifNotAuthenticated,
   },
   {
     path: '/',

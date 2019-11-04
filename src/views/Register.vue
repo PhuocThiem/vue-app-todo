@@ -48,7 +48,7 @@ export default {
       requesting: state => get(state, 'user.user.requesting'),
     }),
     ...mapGetters({
-      register: 'register',
+      isAuthenticated: 'isAuthenticated',
     }),
   },
   methods: {
@@ -57,7 +57,10 @@ export default {
         email: this.user.username,
         password: this.user.password,
       });
-      this.$router.push('/');
+      console.log('isAuthenticated', this.isAuthenticated);
+      if (this.isAuthenticated) {
+        this.$router.push('/');
+      }
     },
   }
 };

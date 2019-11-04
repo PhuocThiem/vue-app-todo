@@ -21,20 +21,43 @@
           placeholder="Password"
         />
       </div>
-      <button class="btn btn-primary" @click="logIn">Submit</button>
+      <button class="btn btn-primary" @click="logIn()">Submit</button>
     </form>
   </div>
 </template>
 
 <script>
+
+import { mapGetters, mapState } from 'vuex';
+import { get } from 'lodash';
+
 export default {
+  data() {
+    return {
+      user: {
+        username: '',
+        password: '',
+      },
+    };
+  },
+  computed: {
+    ...mapState({
+      requesting: state => get(state, 'user.user.requesting'),
+    }),
+    ...mapGetters({
+      isAuthenticated: 'isAuthenticated',
+    }),
+  },
   methods: {
     async logIn() {
       await this.$store.dispatch('LogIn', {
         email: this.user.username,
         password: this.user.password,
       });
-      this.$router.push('/');
+      console.log('isAuthenticated', this.isAuthenticated);
+      if (this.isAuthenticated) {
+        this.$router.push('/');
+      }
     },
   },
 };

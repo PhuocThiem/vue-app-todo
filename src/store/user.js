@@ -1,104 +1,112 @@
 import { get } from 'lodash';
 import { serializeError } from 'serialize-error';
 
+import axios from 'axios';
+
 import User from '../api/user';
+import Storage from '../service/storage';
+import router from '../router';
 
 import {
-  USER_REQUEST,
-  USER_SUCCESS,
-  USER_FAIL,
-  AUTH_REQUEST,
-  AUTH_SUCCESS,
-  AUTH_FAIL,
-  AUTH_LOGOUT,
+  SIGN_UP_REQUEST,
+  SIGN_UP_SUCCESS,
+  SIGN_UP_FAIL,
+  SIGN_IN_REQUEST,
+  SIGN_IN_SUCCESS,
+  SIGN_IN_FAIL,
+  SET_TOKEN_TO_HEADERS,
+  // SIGN_OUT,
 } from '../constant/muationPypes';
 
-const state = {
-  user: {
+const initialState = {
+  signIn: {
     requesting: false,
     status: '',
     result: null,
     console: null,
-    token: localStorage.getItem('token') || '',
   },
-  token: localStorage.getItem('token') || '',
-  status: ''
+  signUp: {
+    requesting: false,
+    status: '',
+    result: null,
+    console: null,
+  },
 };
 
 const actions = {
-  async LogIn({ commit }, { email, password }) {
-    commit(AUTH_REQUEST);
+  async signIn({ commit }, { email, password }) {
+    commit(SIGN_IN_REQUEST);
     try {
       const res = await User.login(email, password);
+      const data = get(res, 'data');
       const token = get(res, 'headers.[x-auth]');
-      localStorage.setItem('token', token);
-      console.log('token', token);
-      commit(AUTH_SUCCESS, token);
+      Storage.setItem(token);
+      const redirectPath = get(router, 'currentRoute.query.redirect');
+      router.push(redirectPath);
+      commit(SIGN_IN_SUCCESS, { token, ...data });
+      commit(SET_TOKEN_TO_HEADERS, token);
     } catch (error) {
       console.log(serializeError(error));
-      commit(AUTH_FAIL, { error: serializeError(error) });
-      localStorage.removeItem('token');
+      commit(SIGN_IN_FAIL, { error: serializeError(error) });
     }
   },
-  async Register({ commit }, { email, password }) {
-    commit(USER_REQUEST);
+
+  async signUp({ commit }, { email, password }) {
+    commit(SIGN_IN_REQUEST);
     try {
       const res = await User.register(email, password);
       const data = get(res, 'data');
       const token = get(res, 'headers.[x-auth]');
-      localStorage.setItem('token', token);
-      console.log('token', token);
-      commit(USER_SUCCESS, data, token);
+      Storage.setItem(token);
+      const redirectPath = get(router, 'currentRoute.query.redirect');
+      router.push(redirectPath);
+      commit(SIGN_UP_SUCCESS, { token, ...data });
+      commit(SET_TOKEN_TO_HEADERS, token);
     } catch (error) {
       console.log(serializeError(error));
-      commit(USER_FAIL, { error: serializeError(error) });
-      localStorage.removeItem('token');
+      commit(SIGN_UP_FAIL, { error: serializeError(error) });
     }
   },
-  // LogOut({ commit }) {
-  //   commit(AUTH_LOGOUT);
-  //   localStorage.removeItem('token');
-  // },
 };
 
 const mutations = {
-  [USER_REQUEST](state) {
-    state.user.requesting = true;
-    state.user.status = '';
+  [SIGN_IN_REQUEST](state) {
+    state.signIn.requesting = true;
+    state.signIn.status = '';
   },
-  [USER_SUCCESS](state, payload, token) {
-    state.user.requesting = false;
-    state.user.status = 'success';
-    state.user.result = payload;
-    state.token = token;
+  [SIGN_IN_SUCCESS](state, payload) {
+    state.signIn.requesting = false;
+    state.signIn.status = 'success';
+    state.signIn.result = payload;
   },
-  [USER_FAIL](state, payload) {
-    state.user.requesting = false;
-    state.user.status = 'error';
-    state.user.error = payload.error;
+  [SIGN_IN_FAIL](state, payload) {
+    state.signIn.requesting = false;
+    state.signIn.status = 'error';
+    state.signIn.error = payload.error;
   },
-  [AUTH_LOGOUT](state) {
-    state.status = '';
-    state.token = '';
+  [SIGN_UP_REQUEST](state) {
+    state.signUp.requesting = true;
+    state.signUp.status = '';
   },
-  [AUTH_REQUEST]: state => {
-    state.status = '';
+  [SIGN_UP_SUCCESS](state, payload) {
+    state.signUp.requesting = false;
+    state.signUp.status = 'success';
+    state.signUp.result = payload;
   },
-  [AUTH_SUCCESS]: (state, token) => {
-    state.status = 'success';
-    state.token = token;
+  [SIGN_UP_FAIL](state, payload) {
+    state.signUp.requesting = false;
+    state.signUp.status = 'error';
+    state.signUp.error = payload.error;
   },
-  [AUTH_FAIL](state) {
-    state.status = 'error';
-  },
+  [SET_TOKEN_TO_HEADERS](state, payload) {
+    axios.defaults.headers.common['X-Auth'] = payload;
+  }
 };
 
-const getters = {
-  isAuthenticated: state => !!state.token
-};
+const getters = {};
 
 export default {
-  state,
+  state: initialState,
   actions,
   mutations,
   getters,

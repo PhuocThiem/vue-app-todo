@@ -6,62 +6,65 @@ import Login from '../views/Login.vue';
 import Users from '../views/Users.vue';
 // import store from '../store/user';
 
-Vue.use(VueRouter);
-// const ifNotAuthenticated = next => {
-//   if (!store.getters.isAuthenticated) {
-//     next();
-//     return;
-//   }
-//   next('/');
-// };
+import Storage from '../service/storage';
 
-// const ifAuthenticated = next => {
-//   if (store.getters.isAuthenticated) {
-//     next();
-//     return;
-//   }
-//   next('/login');
-// };
+Vue.use(VueRouter);
+
 const routes = [
   {
     path: '/register',
     name: 'register',
     component: Register,
-    // beforeEnter: ifNotAuthenticated,
+    meta: {
+      public: true,
+      onlyWhenLogout: true,
+    },
   },
   {
     path: '/login',
     name: 'login',
     component: Login,
+    meta: {
+      public: true,
+      onlyWhenLogout: true,
+    },
   },
   {
     path: '/',
     name: 'home',
     component: Home,
-    // beforeEnter: ifAuthenticated,
   },
   {
     path: '/users',
     name: 'users',
     component: Users,
-    // beforeEnter: ifAuthenticated,
   },
 ];
-
-// routes.beforeEach((to, from, next) => {
-//   const publicPages = ['/login', '/register'];
-//   const authRequired = !publicPages.includes(to.path);
-//   const loggedIn = localStorage.getItem('user');
-
-//   if (authRequired && !loggedIn) {
-//     return next('/login');
-//   }
-//   next();
-// });
 
 const router = new VueRouter({
   routes,
   mode: 'history',
 });
+
+router.beforeEach((to, from, next) => {
+  const token = Storage.getItem();
+
+  const isPublic = to.matched.some(record => record.meta.public);
+  const onlyWhenLogout = to.matched.some(record => record.meta.onlyWhenLogout);
+
+  if (!isPublic && !token) {
+    return next({
+      path: '/login',
+      query: { redirect: to.fullPath },
+    });
+  }
+
+  if (token && onlyWhenLogout) {
+    return next('/');
+  }
+
+  return next();
+});
+
 
 export default router;

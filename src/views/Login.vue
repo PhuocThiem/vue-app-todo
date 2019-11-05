@@ -10,6 +10,7 @@
           id="exampleInputEmail1"
           aria-describedby="emailHelp"
           placeholder="Enter email"
+          v-model="user.email"
         />
       </div>
       <div class="form-group">
@@ -19,9 +20,10 @@
           class="form-control"
           id="exampleInputPassword1"
           placeholder="Password"
+          v-model="user.password"
         />
       </div>
-      <button class="btn btn-primary" @click="logIn()">Submit</button>
+      <button class="btn btn-primary" @click.prevent="logIn">Submit</button>
     </form>
   </div>
 </template>
@@ -35,7 +37,7 @@ export default {
   data() {
     return {
       user: {
-        username: '',
+        email: '',
         password: '',
       },
     };
@@ -45,15 +47,11 @@ export default {
       requesting: state => get(state, 'user.user.requesting'),
     }),
     ...mapGetters({
-      isAuthenticated: 'isAuthenticated',
     }),
   },
   methods: {
     async logIn() {
-      await this.$store.dispatch('LogIn', {
-        email: this.user.username,
-        password: this.user.password,
-      });
+      await this.$store.dispatch('signIn', this.user);
       console.log('isAuthenticated', this.isAuthenticated);
       if (this.isAuthenticated) {
         this.$router.push('/');

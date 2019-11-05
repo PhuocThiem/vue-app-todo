@@ -53,14 +53,10 @@ export default {
   },
   methods: {
     async registerUser() {
-      await this.$store.dispatch('Register', {
+      await this.$store.dispatch('signUp', {
         email: this.user.username,
         password: this.user.password,
       });
-      console.log('isAuthenticated', this.isAuthenticated);
-      if (this.isAuthenticated) {
-        this.$router.push('/');
-      }
     },
   }
 };

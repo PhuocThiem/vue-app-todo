@@ -19,9 +19,10 @@ const state = {
     status: '',
     result: null,
     console: null,
+    token: localStorage.getItem('token') || '',
   },
-  status: '',
   token: localStorage.getItem('token') || '',
+  status: ''
 };
 
 const actions = {
@@ -69,7 +70,7 @@ const mutations = {
     state.user.requesting = false;
     state.user.status = 'success';
     state.user.result = payload;
-    state.user.token = token;
+    state.token = token;
   },
   [USER_FAIL](state, payload) {
     state.user.requesting = false;
@@ -81,20 +82,19 @@ const mutations = {
     state.token = '';
   },
   [AUTH_REQUEST]: state => {
-    state.status = 'loading';
+    state.status = '';
   },
   [AUTH_SUCCESS]: (state, token) => {
     state.status = 'success';
     state.token = token;
   },
-  [AUTH_FAIL] (state) {
+  [AUTH_FAIL](state) {
     state.status = 'error';
   },
 };
 
 const getters = {
-  isAuthenticated: state => !!state.token,
-  authStatus: state => state.status,
+  isAuthenticated: state => !!state.token
 };
 
 export default {

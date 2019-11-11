@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import { get } from 'lodash';
 
 import { SET_TOKEN_TO_HEADERS } from './constant/muationPypes';
@@ -71,20 +71,12 @@ export default {
     ...mapState({
       requesting: state => get(state, 'user.user.requesting'),
     }),
-    ...mapGetters({
-      isAuthenticated: 'isAuthenticated',
-    }),
   },
 
   methods: {
     async logOut() {
       console.log('isLogOut?');
       await this.$store.dispatch('LogOut');
-      this.$router.push('/login');
-    },
-    isLoggedIn() {
-      console.log('isAuthenticated', this.isAuthenticated);
-      return this.isAuthenticated;
     },
   },
   mounted() {
